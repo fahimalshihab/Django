@@ -46,4 +46,57 @@ urlpatterns = [
 ]
 ```
 
+## create database
 
+- models.py :
+```py
+from django.db import models
+
+class Task(models.Model):
+    title = models.CharField(max_length=200)
+    complete = models.BooleanField(default=False)
+    created =  models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+```
+## add in html
+```
+<h3>To Do</h3>
+
+{% for task in tasks %}
+    <div>
+        <p>{{task}}</p>
+
+    </div>
+
+{% endfor %}
+
+```
+
+## register the model in admin.py
+
+- admin.py :
+```py
+from django.contrib import admin
+
+from .models import *
+
+admin.site.register(Task)
+```
+
+## add in views.py
+
+-views.py :
+```py
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from .models import *
+
+def index(request):
+
+    tasks = Task.objects.all()
+    context = {'tasks':tasks}
+    return render(request,'tasks/list.html',context)
+```
