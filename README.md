@@ -149,3 +149,44 @@ add this in list.html
 
 {% endfor %}
 ```
+## Create  items
+- list.html :
+```
+<h3>To Do</h3>
+<form method="POST" action="/">
+    {%csrf_token%}
+    {{form.title}}
+    <input type="submit" name = "Create Task">
+</form>
+
+{% for task in tasks %}
+    <div>
+        <p>{{task}}</p>
+
+    </div>
+
+{% endfor %}
+```
+- views.py :
+```py
+from django.shortcuts import render,redirect
+from django.http import HttpResponse
+
+from .models import *
+from .forms import *
+
+def index(request):
+
+    tasks = Task.objects.all()
+    form = TaskForm()
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+
+
+    context = {'tasks':tasks,'form':form}
+    return render(request,'tasks/list.html',context)
+```
+
