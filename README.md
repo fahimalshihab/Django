@@ -100,3 +100,52 @@ def index(request):
     context = {'tasks':tasks}
     return render(request,'tasks/list.html',context)
 ```
+
+## Create Form
+
+- forms.py :
+```py
+from django import forms
+from django.forms import ModelForm
+
+from .models import *
+
+class TaskForm(forms.ModelForm):
+
+    class Meta:
+        model = Task
+        fields = '__all__'
+```
+add in views.py
+- views.py :
+```py
+from django.shortcuts import render
+from django.http import HttpResponse
+
+from .models import *
+from .forms import *
+
+def index(request):
+
+    tasks = Task.objects.all()
+    form = TaskForm()
+    context = {'tasks':tasks,'form':form}
+    return render(request,'tasks/list.html',context)
+```
+add this in list.html
+- list.html:
+```
+<h3>To Do</h3>
+<form>
+    {{form.title}}
+    <input type="submit" name = "Create Task">
+</form>
+
+{% for task in tasks %}
+    <div>
+        <p>{{task}}</p>
+
+    </div>
+
+{% endfor %}
+```
