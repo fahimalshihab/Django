@@ -190,3 +190,50 @@ def index(request):
     return render(request,'tasks/list.html',context)
 ```
 
+## update
+- update_task.html :
+```
+<h3>Update Task</h3>
+
+<form method="post" action="">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit" name="Update Task">
+</form>
+```
+
+- views.py :
+```py
+def updateTask(request,pk):
+    task = Task.objects.get(id=pk)
+    form = TaskForm(instance=task)
+    if request.method == 'POST':
+        form = TaskForm(request.POST,instance=task)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+    context = {'form':form}
+
+
+    return render(request,'tasks/update_task.html',context)
+```
+- list.html:
+```
+{% for task in tasks %}
+    <div>
+        <a href="{% url 'update_task' task.id %}">Update</a>
+        <p>{{task}}</p>
+
+    </div>
+```
+- urls.py:
+```py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('',views.index, name="list"),
+    path('update_task/<str:pk>/',views.updateTask,name="update_task"),
+
+]
+```
